@@ -20,13 +20,13 @@ https://user-images.githubusercontent.com/29033313/228205138-db122bfd-11b9-4176-
 # Usage
 Some examples:
 
-```python dj.py -p "violin" "opera singer" "funky"``` records the user in a loop, uses prompts in order, saves to 3 channels (1.wav through 3.wav)
+```python dj.py -p "violin" "opera singer" "funky"``` in a loop, record the user, uses prompts in order, saves to 3 channels (1.wav through 3.wav)
 
-```python dj.py -p "violin solo" -c 5``` records the user in a loop, uses "violin" as prompt, saves to 5 channels (1.wav through 5.wav)
+```python dj.py -p "violin solo" -c 5``` in a loop, record the user, uses "violin" as prompt, saves to 5 channels (1.wav through 5.wav)
 
-```python dj.py -p "EDM techno house" -S 0.4 -c 2 -n 2 -l ~/Desktop/break.wav --resize``` uses loaded file in a loop, uses "EDM techno house" as prompt, sets denoising strength to 0.4, saves to 2 channels (1.wav through 2.wav),  quits after 2 iterations, resize the spectrogram instead of cropping.
+```python dj.py -p "EDM techno house" -S 0.4 -c 2 -n 2 -l ~/Desktop/break.wav --resize``` uses loaded file, uses "EDM techno house" as prompt, sets denoising strength to 0.4, saves to 2 channels (1.wav through 2.wav),  quits after 2 iterations, resize the spectrogram instead of cropping.
 
-```python dj.py -p "opera singer" "orchestra" -c 4 -l ~/Desktop/raga.wav``` uses loaded file in a loop, uses prompts in order, saves to 4 channels (1.wav through 4.wav), randomly crops input spectrogram each iteration
+```python dj.py -p "opera singer" "orchestra" -c 4 -l ~/Desktop/raga.wav``` in a loop, uses loaded file, uses prompts in order, saves to 4 channels (1.wav through 4.wav), randomly crops input spectrogram each iteration
 
 All options:
 ```optional arguments:
