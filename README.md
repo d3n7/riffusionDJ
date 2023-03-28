@@ -54,4 +54,4 @@ All options:
                         number of wavs to generate, ex: 3 would cycle from
                         1.wav to 3.wav (default: length of prompt list)
   -n NUM, --num NUM     number of iterations before quitting (default:
-                        infinite)```
+                        infinite)
