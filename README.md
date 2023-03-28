@@ -1,2 +1,51 @@
 # riffusionDJ
-Multichannel Looper/Feedback System for Riffusion
+Multichannel Looper/Feedback System for Riffusion (with Automatic1111) made for live performance
+- Record or load audio
+- Resize loaded files (great for drum loops) or randomly crop loaded files
+- Any # of prompts, any # of channels
+- Automatic1111 Google Colab included for faster performance on consumer hardware
+- Max MSP looper patch included for playing back generated samples
+
+# Dependencies
+1. Install the Riffusion Github if you haven't: https://github.com/riffusion/riffusion
+2. ```pip install scipy PIL pydub sounddevice```
+3. (OPTIONAL) Install Automatic1111: https://github.com/AUTOMATIC1111/stable-diffusion-webui
+
+# Usage
+Some examples:
+
+```python dj.py -p "violin" "opera singer" "funky"``` records the user in a loop, uses prompts in order, saves to 3 channels (1.wav through 3.wav)
+
+```python dj.py -p "violin solo" -c 5``` records the user in a loop, uses "violin" as prompt, saves to 5 channels (1.wav through 5.wav)
+
+```python dj.py -p "EDM techno house" -S 0.4 -c 2 -n 2 -l ~/Desktop/break.wav --resize``` uses loaded file in a loop, uses "EDM techno house" as prompt, sets denoising strength to 0.4, saves to 2 channels (1.wav through 2.wav),  quits after 2 iterations, resize the spectrogram instead of cropping.
+
+```python dj.py -p "opera singer" "orchestra" -c 4 -l ~/Desktop/raga.wav``` uses loaded file in a loop, uses prompts in order, saves to 4 channels (1.wav through 4.wav), randomly crops input spectrogram each iteration
+
+All options:
+```optional arguments:
+  -h, --help            show this help message and exit
+  -p PROMPTS [PROMPTS ...], --prompts PROMPTS [PROMPTS ...]
+                        specify prompts to use in quotes seperated by spaces
+  -s, --shuffle         shuffle prompt order
+  -r, --reverse         reverse samples pre-riffusion
+  -R, --retain          retain previously generated samples
+  -S STRENGTH, --strength STRENGTH
+                        denoising strength (default: 0.5)
+  -cfg CFG, --cfg CFG   CFG scale (default: 7.5)
+  -st STEPS, --steps STEPS
+                        steps count (default: 50)
+  -H HOST, --host HOST  specify Automatic1111 web host (default:
+                        http://127.0.0.1:7860)
+  -a AUTH, --auth AUTH  specify "username:password" if using basic http
+                        authentication
+  -l LOAD, --load LOAD  load an audio file instead of recording (specify path
+                        in quotes if there's spaces in it)
+  -rs, --resize         resize spectrogram instead of randomly cropping it
+                        (only applies to loaded files)
+  -rl, --reload         use previously generated spectrogram (ignores loaded file/record mode)
+  -c CHANNELS, --channels CHANNELS
+                        number of wavs to generate, ex: 3 would cycle from
+                        1.wav to 3.wav (default: length of prompt list)
+  -n NUM, --num NUM     number of iterations before quitting (default:
+                        infinite)```
