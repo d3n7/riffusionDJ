@@ -22,7 +22,7 @@ Some examples:
 
 ```python dj.py -p "violin" "opera singer" "funky"``` in a loop, record the user, uses prompts in order, saves to 3 channels (1.wav through 3.wav)
 
-```python dj.py -p "violin solo" -c 5``` in a loop, record the user, uses "violin" as prompt, saves to 5 channels (1.wav through 5.wav)
+```python dj.py -p "violin solo" -c 5``` in a loop, record the user, uses "violin solo" as prompt, saves to 5 channels (1.wav through 5.wav)
 
 ```python dj.py -p "EDM techno house" -S 0.4 -c 2 -n 2 -l ~/Desktop/break.wav --resize``` uses loaded file, uses "EDM techno house" as prompt, sets denoising strength to 0.4, saves to 2 channels (1.wav through 2.wav),  quits after 2 iterations, resize the spectrogram instead of cropping.
 
