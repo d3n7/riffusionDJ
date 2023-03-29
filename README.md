@@ -55,6 +55,6 @@ All options:
                         1.wav to 3.wav (default: length of prompt list)
   -i INDEX, --index INDEX
                         set starting index, ex: -i 3 -c 2 would cycle from
-                        3.wav to 5.wav (default: 1)
+                        3.wav to 4.wav (default: 1)
   -n NUM, --num NUM     number of iterations before quitting (default:
                         infinite)
