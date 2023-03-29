@@ -28,7 +28,7 @@ parser.add_argument("-l", "--load", help="load an audio file instead of recordin
 parser.add_argument("-rs", "--resize", help="resize spectrogram instead of randomly cropping it (only applies to loaded files)", action="store_true")
 parser.add_argument("-rl", "--reload", help="use previously generated spectrogram (ignores loaded file/record mode)", action="store_true")
 parser.add_argument("-c", "--channels", help="number of wavs to generate, ex: 3 would cycle from 1.wav to 3.wav (default: length of prompt list)", type=int)
-parser.add_argument("-i", "--index", help="set starting index, ex: -i 3 -c 2 would cycle from 3.wav to 5.wav (default: 1)", type=int, default=1)
+parser.add_argument("-i", "--index", help="set starting index, ex: -i 3 -c 2 would cycle from 3.wav to 4.wav (default: 1)", type=int, default=1)
 parser.add_argument("-n", "--num", help="number of iterations before quitting (default: infinite)", type=int)
 args = parser.parse_args()
 
