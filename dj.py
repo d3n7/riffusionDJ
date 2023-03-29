@@ -49,7 +49,7 @@ creds = args.auth.split(":") if args.auth else "  "
 if loadFile:
     #loadFile = "".join(loadFile.split("\b"))
     os.system("cp \"{}\" \"{}\"".format(loadFile, inPath))
-    os.system("rm -rf "+audioPath)
+    os.system("rm -rf \"{}\"".format(audioPath))
     os.system("mv \"{}\" \"{}\"".format(inPath+loadFile.split("/")[-1], audioPath))
 if args.shuffle:
     random.shuffle(prompts) #randomize the prompt order
