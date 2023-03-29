@@ -28,6 +28,7 @@ parser.add_argument("-l", "--load", help="load an audio file instead of recordin
 parser.add_argument("-rs", "--resize", help="resize spectrogram instead of randomly cropping it (only applies to loaded files)", action="store_true")
 parser.add_argument("-rl", "--reload", help="use previously generated spectrogram (ignores loaded file/record mode)", action="store_true")
 parser.add_argument("-c", "--channels", help="number of wavs to generate, ex: 3 would cycle from 1.wav to 3.wav (default: length of prompt list)", type=int)
+parser.add_argument("-i", "--index", help="set starting index, ex: -i 3 -c 2 would cycle from 3.wav to 5.wav (default: 1)", type=int, default=1)
 parser.add_argument("-n", "--num", help="number of iterations before quitting (default: infinite)", type=int)
 args = parser.parse_args()
 
@@ -41,6 +42,7 @@ resize = args.resize
 reload = args.reload if os.path.isfile(specIn) else False
 loadFile = None if reload else args.load
 channels = args.channels if args.channels else len(prompts)
+index = args.index
 num = args.num
 url = args.host+"sdapi/v1/img2img" if args.host.endswith("/") else args.host+"/sdapi/v1/img2img"
 creds = args.auth.split(":") if args.auth else "  "
@@ -51,18 +53,11 @@ if loadFile:
     os.system("mv \"{}\" \"{}\"".format(inPath+loadFile.split("/")[-1], audioPath))
 if args.shuffle:
     random.shuffle(prompts) #randomize the prompt order
-numWavs = 0
-if args.retain:
-    for i in os.listdir(outPath):
-        if i.endswith(".wav"):
-            numWavs += 1
-    if numWavs > channels:
-        numWavs = 0
-else:
+if not args.retain:
     os.system("rm -rf \"{}*.wav\"".format(outPath))
 
 #main loop
-counter = channels+numWavs
+counter = channels
 while 1:
     for p in prompts:
         #record input audio
@@ -80,7 +75,7 @@ while 1:
             reversed.export(audioPath, format="wav")
 
         #convert audio to input spectrogram
-        if (counter==channels+numWavs or (not loadFile)) and (not reload):
+        if (counter==channels or (not loadFile)) and (not reload):
             print("\n[*] Making input spectrogram\n")
             os.system("python -m riffusion.cli audio-to-image -a \"{}\" -i \"{}\" >/dev/null 2>&1".format(audioPath, specIn))
 
@@ -114,12 +109,12 @@ while 1:
         print("\n[*] Received spectrogram\n")
 
         #turn output spectrogram into audio
-        wavcount = str(counter%channels+1)
+        wavcount = str(counter%channels+index)
         os.system("python -m riffusion.cli image-to-audio  -i \"{}\" -a \"{}\" >/dev/null 2>&1".format(specOut, outPath+wavcount+".wav"))
         print("\n[*] Saved audio as {}\n".format(wavcount+".wav"))
 
         counter += 1
         if num:
-            if counter >= channels+numWavs+num:
+            if counter >= channels+num:
                 print("\n[*] Quitting after {} iters\n".format(num))
                 exit()
