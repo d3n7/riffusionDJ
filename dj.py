@@ -2,8 +2,7 @@
 import io, os, base64, requests, json, random, argparse
 import sounddevice as sd
 from scipy.io import wavfile
-from PIL import Image
-from pydub import AudioSegment
+from PIL import Image, ImageOps
 
 #environment variables
 path = os.path.realpath(os.path.dirname(__file__))
@@ -69,11 +68,6 @@ while 1:
             sd.wait()
             wavfile.write(audioPath, freq, recording)
 
-        #reverse it
-        if reverse:
-            reversed = AudioSegment.from_wav(audioPath).reverse()
-            reversed.export(audioPath, format="wav")
-
         #convert audio to input spectrogram
         if (counter==channels or (not loadFile)) and (not reload):
             print("\n[*] Making input spectrogram\n")
@@ -89,6 +83,11 @@ while 1:
                 cropped = cropped.crop((randX, 0, randX+512, height))
                 cropped.save(inPath+"cropped.png", "PNG")
                 imgPath = inPath+"cropped.png"
+
+        #reverse it
+        if reverse:
+            reversed = ImageOps.mirror(Image.open(imgPath))
+            reversed.save(imgPath,"PNG")
 
         #make post request to Automatic1111 API
         encodedI = base64.b64encode(open(imgPath, "rb").read())
