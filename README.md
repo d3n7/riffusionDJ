@@ -14,7 +14,7 @@ https://user-images.githubusercontent.com/29033313/228205138-db122bfd-11b9-4176-
 
 # Dependencies
 1. Install the Riffusion Github if you haven't: https://github.com/riffusion/riffusion
-2. ```pip install scipy PIL pydub sounddevice```
+2. ```pip install scipy PIL sounddevice```
 3. (IF NOT USING GOOGLE COLAB) Install Automatic1111: https://github.com/AUTOMATIC1111/stable-diffusion-webui
 
 # Usage
