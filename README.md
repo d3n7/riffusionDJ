@@ -35,7 +35,7 @@ All options:
                         specify prompts to use in quotes seperated by spaces
   -s, --shuffle         shuffle prompt order
   -r, --reverse         reverse samples pre-riffusion
-  -R, --retain          retain previously generated samples
+  -C, --clear           delete previously generated files
   -S STRENGTH, --strength STRENGTH
                         denoising strength (default: 0.5)
   -cfg CFG, --cfg CFG   CFG scale (default: 7.5)
@@ -49,12 +49,16 @@ All options:
                         in quotes if there's spaces in it)
   -rs, --resize         resize spectrogram instead of randomly cropping it
                         (only applies to loaded files)
-  -rl, --reload         use previously generated spectrogram (ignores loaded file/record mode)
+  -rl, --reload         use previously generated spectrogram (ignores loaded
+                        file/record mode)
   -c CHANNELS, --channels CHANNELS
                         number of wavs to generate, ex: 3 would cycle from
                         1.wav to 3.wav (default: length of prompt list)
   -i INDEX, --index INDEX
                         set starting index, ex: -i 3 -c 2 would cycle from
                         3.wav to 4.wav (default: 1)
+  -t THREAD, --thread THREAD
+                        thread # identifier, meant for running multiple
+                        instances of this script (default: 0)
   -n NUM, --num NUM     number of iterations before quitting (default:
                         infinite)
