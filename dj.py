@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import io, os, base64, requests, json, random, argparse
+import io, os, base64, requests, json, random, argparse, platform, shutil
 import sounddevice as sd
 from scipy.io import wavfile
 from PIL import Image, ImageOps
@@ -9,6 +9,7 @@ path = os.path.realpath(os.path.dirname(__file__))
 inPath = path+"/input/"
 outPath = path+"/output/"
 audioPath = inPath+"input.wav"
+cropPath = inPath+"cropped.png"
 specIn = inPath+"input.png"
 specOut = outPath+"output.png"
 
@@ -17,7 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--prompts", help="specify prompts to use in quotes seperated by spaces", nargs="+", default=["opera singer","piano","violin","electronic drums","synthesizer"])
 parser.add_argument("-s", "--shuffle", help="shuffle prompt order", action="store_true")
 parser.add_argument("-r", "--reverse", help="reverse samples pre-riffusion", action="store_true")
-parser.add_argument("-R", "--retain", help="retain previously generated samples", action="store_true")
+parser.add_argument("-C", "--clear", help="delete previously generated files", action="store_true")
 parser.add_argument("-S", "--strength", help="denoising strength (default: 0.5)", type=float, default=0.5)
 parser.add_argument("-cfg", "--cfg", help="CFG scale (default: 7.5)", type=float, default=7.5)
 parser.add_argument("-st", "--steps", help="steps count (default: 50)", type=int, default=50)
@@ -28,39 +29,48 @@ parser.add_argument("-rs", "--resize", help="resize spectrogram instead of rando
 parser.add_argument("-rl", "--reload", help="use previously generated spectrogram (ignores loaded file/record mode)", action="store_true")
 parser.add_argument("-c", "--channels", help="number of wavs to generate, ex: 3 would cycle from 1.wav to 3.wav (default: length of prompt list)", type=int)
 parser.add_argument("-i", "--index", help="set starting index, ex: -i 3 -c 2 would cycle from 3.wav to 4.wav (default: 1)", type=int, default=1)
-parser.add_argument("-n", "--num", help="number of iterations before quitting (default: infinite)", type=int)
+parser.add_argument("-t", "--thread", help="thread # identifier, meant for running multiple instances of this script (default: 0)", type=int, default=0)
+parser.add_argument("-n", "--num", help="number of iterations before quitting (default: infinite)", type=int, default=0)
 args = parser.parse_args()
 
-#store args, setup stuff
+#store args, setup vars
+
 reverse = args.reverse
 prompts = args.prompts
 strength = args.strength
 cfg = args.cfg
 steps = args.steps
 resize = args.resize
-reload = args.reload if os.path.isfile(specIn) else False
-loadFile = None if reload else args.load
 channels = args.channels if args.channels else len(prompts)
 index = args.index
 num = args.num
 url = args.host+"sdapi/v1/img2img" if args.host.endswith("/") else args.host+"/sdapi/v1/img2img"
 creds = args.auth.split(":") if args.auth else "  "
+if args.clear:
+    for i in [inPath, outPath]:
+        for j in os.listdir(i):
+            f = os.path.join(i, j)
+            if f.endswith(".wav") or f.endswith(".png"):
+                os.remove(f)
+thread = args.thread
+if thread != 0:
+    audioPath = audioPath[:-4]+str(thread)+audioPath[-4:]
+    cropPath = cropPath[:-4]+str(thread)+cropPath[-4:]
+    specIn = specIn[:-4]+str(thread)+specIn[-4:]
+    specOut = specOut[:-4]+str(thread)+specOut[-4:]
+reload = args.reload if os.path.isfile(specIn) else False
+loadFile = None if reload else args.load
 if loadFile:
-    #loadFile = "".join(loadFile.split("\b"))
-    os.system("cp \"{}\" \"{}\"".format(loadFile, inPath))
-    os.system("rm -rf \"{}\"".format(audioPath))
-    os.system("mv \"{}\" \"{}\"".format(inPath+loadFile.split("/")[-1], audioPath))
+    shutil.copy(loadFile, audioPath)
 if args.shuffle:
     random.shuffle(prompts) #randomize the prompt order
-if not args.retain:
-    os.system("rm -rf \"{}*.wav\"".format(outPath))
 
 #main loop
 counter = channels
 while 1:
     for p in prompts:
-        #record input audio
-        if not loadFile and not reload:
+        #record input audio (if it's not a loadFile or reload)
+        if not (loadFile or reload):
             freq = 44100
             duration = 5.119
             print("\n[*] Recording audio...\n")
@@ -68,12 +78,12 @@ while 1:
             sd.wait()
             wavfile.write(audioPath, freq, recording)
 
-        #convert audio to input spectrogram
+        #convert audio to input spectrogram (if it's a loaded file only do it on the first run, or never if reload, otherwise everytime)
         if (counter==channels or (not loadFile)) and (not reload):
             print("\n[*] Making input spectrogram\n")
             os.system("python -m riffusion.cli audio-to-image -a \"{}\" -i \"{}\" >/dev/null 2>&1".format(audioPath, specIn))
 
-        #random crop
+        #random crop (only if it's a reload or loaded file, and not if resize)
         imgPath = specIn
         if (loadFile or reload) and (not resize):
             cropped = Image.open(specIn)
@@ -81,13 +91,14 @@ while 1:
             if width>512:
                 randX = random.randint(0,width-512)
                 cropped = cropped.crop((randX, 0, randX+512, height))
-                cropped.save(inPath+"cropped.png", "PNG")
-                imgPath = inPath+"cropped.png"
+                cropped.save(cropPath, "PNG")
+                imgPath = cropPath
 
-        #reverse it
+        #reverse it (if it's a loaded file or reload and its being resized, only on reverse spec once, otherwise every time)
         if reverse:
-            reversed = ImageOps.mirror(Image.open(imgPath))
-            reversed.save(imgPath,"PNG")
+            if counter==channels or (not ((loadFile or reload) and resize)):
+                reversed = ImageOps.mirror(Image.open(imgPath))
+                reversed.save(imgPath,"PNG")
 
         #make post request to Automatic1111 API
         encodedI = base64.b64encode(open(imgPath, "rb").read())
