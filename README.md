@@ -8,6 +8,8 @@ Multichannel Looper/Feedback System for Riffusion (with Automatic1111) made for 
 
 ![2924553387_Photo of a Robot DJ at a rave Face, human_xl-beta-v2-2-2](https://user-images.githubusercontent.com/29033313/228206617-fb12c9cc-9f37-41f5-af92-b3c62273778e.png)
 
+https://user-images.githubusercontent.com/29033313/229276109-077edfc5-1d2a-47b6-9972-65374b12bb1f.mp4
+
 https://user-images.githubusercontent.com/29033313/228204558-729204e7-7582-4ed7-9b58-8b1cd17262d6.mp4
 
 https://user-images.githubusercontent.com/29033313/228205138-db122bfd-11b9-4176-b25b-c9402cd9d86d.mp4
