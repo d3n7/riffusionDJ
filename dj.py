@@ -1,17 +1,17 @@
 #!/usr/bin/env python
-import io, os, base64, requests, json, random, argparse, platform, shutil
+import io, os, base64, requests, json, random, argparse, shutil
 import sounddevice as sd
 from scipy.io import wavfile
 from PIL import Image, ImageOps
 
 #environment variables
 path = os.path.realpath(os.path.dirname(__file__))
-inPath = path+"/input/"
-outPath = path+"/output/"
-audioPath = inPath+"input.wav"
-cropPath = inPath+"cropped.png"
-specIn = inPath+"input.png"
-specOut = outPath+"output.png"
+inPath = os.path.join(path,"input")
+outPath = os.path.join(path,"output")
+audioPath = os.path.join(inPath,"input.wav")
+cropPath = os.path.join(inPath,"cropped.png")
+specIn = os.path.join(inPath,"input.png")
+specOut = os.path.join(outPath,"output.png")
 
 #parse arguments
 parser = argparse.ArgumentParser()
@@ -34,7 +34,6 @@ parser.add_argument("-n", "--num", help="number of iterations before quitting (d
 args = parser.parse_args()
 
 #store args, setup vars
-
 reverse = args.reverse
 prompts = args.prompts
 strength = args.strength
@@ -49,9 +48,8 @@ creds = args.auth.split(":") if args.auth else "  "
 if args.clear:
     for i in [inPath, outPath]:
         for j in os.listdir(i):
-            f = os.path.join(i, j)
-            if f.endswith(".wav") or f.endswith(".png"):
-                os.remove(f)
+            if j.endswith(".wav") or j.endswith(".png"):
+                os.remove(os.path.join(i, j))
 thread = args.thread
 if thread != 0:
     audioPath = audioPath[:-4]+str(thread)+audioPath[-4:]
@@ -120,7 +118,7 @@ while 1:
 
         #turn output spectrogram into audio
         wavcount = str(counter%channels+index)
-        os.system("python -m riffusion.cli image-to-audio  -i \"{}\" -a \"{}\" >/dev/null 2>&1".format(specOut, outPath+wavcount+".wav"))
+        os.system("python -m riffusion.cli image-to-audio  -i \"{}\" -a \"{}\" >/dev/null 2>&1".format(specOut, os.path.join(outPath,wavcount+".wav")))
         print("\n[*] Saved audio as {}\n".format(wavcount+".wav"))
 
         counter += 1
