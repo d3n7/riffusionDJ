@@ -3,7 +3,6 @@ Multichannel Looper/Feedback System for Riffusion (with Automatic1111) made for 
 - Record or load audio
 - Resize loaded files (great for drum loops) or randomly crop loaded files
 - Any # of prompts, any # of channels
-- [Automatic1111 Google Colab](https://colab.research.google.com/drive/1ihH8OpWgrNdn1wcBH1qZOTOIkGkF63Bc) for faster performance on consumer hardware
 - Max MSP looper patch included for playing back generated samples
 
 ![2924553387_Photo of a Robot DJ at a rave Face, human_xl-beta-v2-2-2](https://user-images.githubusercontent.com/29033313/228206617-fb12c9cc-9f37-41f5-af92-b3c62273778e.png)
